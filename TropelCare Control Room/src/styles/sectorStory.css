@@ -1,0 +1,108 @@
+
+.story-progress-track {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 50;
+}
+
+.story-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #34d399, #22d3ee);
+  transform-origin: left;
+  width: calc(var(--story-progress-fallback, 0) * 100%);
+}
+
+@supports (animation-timeline: scroll()) {
+  .story-progress-fill {
+    width: 100%;
+    transform: scaleX(0);
+    animation: story-fill-scroll linear forwards;
+    animation-timeline: scroll(root);
+    animation-range: contain;
+  }
+}
+
+@keyframes story-fill-scroll {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.story-visual-panel {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.story-visual-art {
+  width: 100%;
+  height: 70%;
+  border-radius: 1.5rem;
+  transition: background 0.5s ease, opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.story-visual-art.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@supports (animation-timeline: view()) {
+  .story-visual-art.is-active {
+    animation: story-art-breathe linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+
+@keyframes story-art-breathe {
+  from { transform: scale(0.94); }
+  to { transform: scale(1); }
+}
+
+.story-stage {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+}
+
+.story-stage.is-active {
+  opacity: 1;
+}
+
+::view-transition-old(sector-summary),
+::view-transition-new(sector-story) {
+  animation-duration: 0.4s;
+}
+
+[data-view-transition="sector-card"] {
+  view-transition-name: sector-summary;
+}
+
+[data-view-transition="story-root"] {
+  view-transition-name: sector-story;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-progress-fill,
+  .story-visual-art,
+  .story-stage {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .story-visual-art.is-active {
+    transform: none;
+  }
+}
